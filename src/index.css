@@ -146,6 +146,12 @@ button {
   animation: borderFlow 8s linear infinite;
 }
 
+body.dg-scroll-lock {
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: contain !important;
+}
+
 .section-shell {
   position: relative;
   width: min(1180px, calc(100% - 32px));

@@ -450,7 +450,7 @@ const ModelViewer: FC<ViewerProps> = ({
       style={{
         width,
         height,
-        touchAction: 'pan-y pinch-zoom'
+        touchAction: 'none'
       }}
       className="relative"
     >
@@ -475,7 +475,7 @@ const ModelViewer: FC<ViewerProps> = ({
           gl.outputColorSpace = THREE.SRGBColorSpace;
         }}
         camera={{ fov: 50, position: [0, 0, camZ], near: 0.01, far: 100 }}
-        style={{ touchAction: 'pan-y pinch-zoom' }}
+        style={{ touchAction: 'none' }}
       >
         {environmentPreset !== 'none' && <Environment preset={environmentPreset as any} background={false} />}
 
