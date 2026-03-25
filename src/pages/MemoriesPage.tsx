@@ -8,6 +8,10 @@ const domeImages = photoEntries.map((p) => ({
   alt: p.alt,
 }));
 
+const captionByAlt = new Map(
+  photoEntries.map((p) => [p.alt, { title: p.title, note: p.note }])
+);
+
 export function MemoriesPage() {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const galleryRef = useRef<HTMLDivElement | null>(null);
@@ -30,6 +34,33 @@ export function MemoriesPage() {
     const prevent = (e: TouchEvent) => e.preventDefault();
     el.addEventListener('touchmove', prevent, { passive: false });
     return () => el.removeEventListener('touchmove', prevent);
+  }, []);
+
+  useEffect(() => {
+    const container = galleryRef.current;
+    if (!container) return;
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (!(node instanceof HTMLElement) || !node.classList.contains('enlarge')) continue;
+          const img = node.querySelector('img');
+          if (!img) continue;
+          const caption = captionByAlt.get(img.alt);
+          if (!caption) continue;
+          const overlay = document.createElement('div');
+          overlay.style.cssText =
+            'position:absolute;inset-x:0;bottom:0;padding:22px 18px 20px;' +
+            'background:linear-gradient(to top,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.45) 65%,transparent 100%);' +
+            'pointer-events:none;z-index:10;';
+          overlay.innerHTML =
+            `<p style="margin:0 0 5px;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.52);">${caption.title}</p>` +
+            `<p style="margin:0;font-size:14px;line-height:1.5;color:#fff;font-weight:500;">${caption.note}</p>`;
+          node.appendChild(overlay);
+        }
+      }
+    });
+    observer.observe(container, { childList: true, subtree: true });
+    return () => observer.disconnect();
   }, []);
 
   return (
