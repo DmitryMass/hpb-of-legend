@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { FloatingNav } from './components/FloatingNav'
 import { IntroScreen } from './components/IntroScreen'
@@ -6,7 +6,6 @@ import { photoEntries } from './lib/photos'
 import { HomePage } from './pages/HomePage'
 import { LuxDrivePage } from './pages/LuxDrivePage'
 import { MemoriesPage } from './pages/MemoriesPage'
-import { WishesPage } from './pages/WishesPage'
 
 function ScrollToTop() {
   const location = useLocation()
@@ -35,9 +34,18 @@ function BackgroundDecor() {
 }
 
 function App() {
-  const [introOpen, setIntroOpen] = useState(() => {
-    return sessionStorage.getItem('birthday-intro-seen') !== '1'
-  })
+  const location = useLocation()
+  const prevPathRef = useRef(location.pathname)
+  const [introOpen, setIntroOpen] = useState(location.pathname === '/')
+
+  useEffect(() => {
+    const prev = prevPathRef.current
+    prevPathRef.current = location.pathname
+    // Re-open intro when navigating back to / from another page
+    if (location.pathname === '/' && prev !== '/') {
+      setIntroOpen(true)
+    }
+  }, [location.pathname])
 
   useEffect(() => {
     document.body.classList.toggle('overflow-hidden', introOpen)
@@ -50,7 +58,6 @@ function App() {
   const photoCount = photoEntries.filter((photo) => !photo.isPlaceholder).length
 
   const handleStart = () => {
-    sessionStorage.setItem('birthday-intro-seen', '1')
     setIntroOpen(false)
   }
 
@@ -69,7 +76,6 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage photoCount={photoCount} />} />
           <Route path="/memories" element={<MemoriesPage />} />
-          <Route path="/wishes" element={<WishesPage />} />
           <Route path="/lux-drive" element={<LuxDrivePage />} />
         </Routes>
       </div>

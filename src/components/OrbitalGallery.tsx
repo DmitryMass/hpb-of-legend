@@ -107,7 +107,8 @@ export function OrbitalGallery() {
   return (
     <>
       <div className="glass-panel rounded-[2rem] p-4 md:p-6">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        {/* Header — hidden on mobile, shown on desktop */}
+        <div className="hidden md:flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-sm font-semibold tracking-[0.24em] uppercase text-cyan-200">
               dome gallery mode
@@ -116,8 +117,7 @@ export function OrbitalGallery() {
               Крути орбіту та тицяй у фото
             </h3>
             <p className="mt-3 max-w-xl text-sm leading-7 text-slate-300 md:text-base">
-              На телефоні свайпай, на десктопі користуйся кнопками або просто
-              вибирай улюблений кадр.
+              На десктопі користуйся кнопками або просто вибирай улюблений кадр.
             </p>
           </div>
 
@@ -139,19 +139,36 @@ export function OrbitalGallery() {
           </div>
         </div>
 
-        <div className="mt-8 md:hidden">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <p className="text-xs font-semibold tracking-[0.26em] uppercase text-slate-300">
-              mobile photo flow
-            </p>
-            <p className="text-xs text-slate-400">Свайпай або просто тицяй</p>
+        {/* Mobile: minimal label + swipe hint */}
+        <div className="flex items-center justify-between gap-3 md:hidden">
+          <p className="text-[11px] font-semibold tracking-[0.22em] uppercase text-cyan-200">
+            свайпай або тицяй
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={rotateLeft}
+              className="rounded-full border border-white/12 bg-white/6 px-3 py-1.5 text-[10px] font-bold uppercase text-white"
+            >
+              ←
+            </button>
+            <button
+              type="button"
+              onClick={rotateRight}
+              className="rounded-full border border-white/12 bg-white/6 px-3 py-1.5 text-[10px] font-bold uppercase text-white"
+            >
+              →
+            </button>
           </div>
+        </div>
 
+        {/* Mobile horizontal scroll cards */}
+        <div className="mt-4 md:hidden">
           <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-10 bg-gradient-to-r from-slate-950/90 to-transparent" />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-10 bg-gradient-to-l from-slate-950/90 to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-6 bg-gradient-to-r from-slate-950/90 to-transparent" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-6 bg-gradient-to-l from-slate-950/90 to-transparent" />
 
-            <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-4">
+            <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-3">
               {photoEntries.map((photo, index) => {
                 const wish = birthdayWishes[index % birthdayWishes.length]
 
@@ -160,9 +177,9 @@ export function OrbitalGallery() {
                     key={`${photo.id}-mobile`}
                     type="button"
                     onClick={() => openCard(index)}
-                    className={`shimmer-border relative min-w-[78vw] snap-center overflow-hidden rounded-[1.8rem] bg-gradient-to-br ${wish.accent} p-[1px] text-left shadow-[0_18px_60px_rgba(15,23,42,0.5)]`}
+                    className={`shimmer-border relative min-w-[72vw] snap-center overflow-hidden rounded-[1.6rem] bg-gradient-to-br ${wish.accent} p-[1px] text-left shadow-[0_18px_60px_rgba(15,23,42,0.5)]`}
                   >
-                    <div className="relative h-[24rem] rounded-[calc(1.8rem-1px)] bg-slate-950/90">
+                    <div className="relative h-[52vw] min-h-[200px] max-h-[260px] rounded-[calc(1.6rem-1px)] bg-slate-950/90">
                       {photo.src ? (
                         <img
                           src={photo.src}
@@ -170,23 +187,16 @@ export function OrbitalGallery() {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.32),_rgba(91,33,182,0.92))] p-6 text-center text-sm font-bold uppercase tracking-[0.22em] text-white">
-                          Фото
-                          <br />
-                          скоро тут
+                        <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.32),_rgba(91,33,182,0.92))] p-6 text-center text-xs font-bold uppercase tracking-[0.22em] text-white">
+                          Фото скоро тут
                         </div>
                       )}
 
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
-                      <div className="absolute inset-x-0 bottom-0 p-5">
-                        <span className="inline-flex rounded-full border border-white/15 bg-black/30 px-3 py-1 text-[10px] font-bold tracking-[0.24em] uppercase text-cyan-100">
-                          тицяй
-                        </span>
-                        <h4 className="mt-3 text-xl font-bold text-white">
-                          {photo.title}
-                        </h4>
-                        <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-200">
-                          {photo.note}
+                      <div className="absolute inset-x-0 bottom-0 p-4">
+                        <h4 className="text-base font-bold text-white">{photo.title}</h4>
+                        <p className="mt-1 text-xs font-semibold text-cyan-200">
+                          тицяй для флипу
                         </p>
                       </div>
                     </div>
@@ -197,6 +207,7 @@ export function OrbitalGallery() {
           </div>
         </div>
 
+        {/* Desktop orbital ring */}
         <div
           ref={stageRef}
           onTouchStart={handleTouchStart}
@@ -227,9 +238,7 @@ export function OrbitalGallery() {
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.35),_rgba(91,33,182,0.88))] p-4 text-center text-xs font-bold uppercase tracking-[0.2em] text-white">
-                  Сюди сядуть
-                  <br />
-                  фото
+                  Фото
                 </div>
               )}
             </button>
@@ -237,17 +246,88 @@ export function OrbitalGallery() {
         </div>
       </div>
 
+      {/* Card modal */}
       {selectedPhoto ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 px-4 py-10 backdrop-blur-md">
-          <div className="relative w-full max-w-5xl overflow-y-auto max-h-[100svh] py-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 px-4 py-6 backdrop-blur-md">
+          {/* Close button */}
+          <button
+            type="button"
+            onClick={closeCard}
+            className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/50 text-sm font-bold text-white hover:bg-white/10"
+          >
+            ✕
+          </button>
+
+          {/* Mobile: single flip card */}
+          <div className="w-full max-w-sm md:hidden">
             <button
               type="button"
-              onClick={closeCard}
-              className="absolute right-0 top-0 z-10 rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs font-bold tracking-[0.24em] uppercase text-white"
+              onClick={() => setIsFlipped((v) => !v)}
+              className={`birthday-card-flip relative h-[68svh] w-full rounded-[2rem] text-left ${
+                isFlipped ? 'is-flipped' : ''
+              }`}
             >
-              Закрити
-            </button>
+              {/* Front: photo */}
+              <div className="birthday-card-face glass-panel absolute inset-0 overflow-hidden rounded-[2rem]">
+                {selectedPhoto.src ? (
+                  <img
+                    src={selectedPhoto.src}
+                    alt={selectedPhoto.alt}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(192,132,252,0.42),_rgba(8,15,36,0.96))] p-8 text-center">
+                    <div>
+                      <p className="text-xs font-semibold tracking-[0.34em] uppercase text-cyan-200">
+                        photo slot
+                      </p>
+                      <h4 className="mt-4 font-display text-2xl text-white">
+                        Фото тут буде
+                      </h4>
+                    </div>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-6">
+                  <h4 className="text-xl font-bold text-white">{selectedPhoto.title}</h4>
+                  <p className="mt-2 text-xs font-semibold text-cyan-200/80">
+                    тицяй щоб перевернути
+                  </p>
+                </div>
+              </div>
 
+              {/* Back: wish */}
+              <div className={`birthday-card-face back glass-panel absolute inset-0 overflow-hidden rounded-[2rem] p-6`}>
+                <span className="inline-flex rounded-full border border-white/12 bg-white/6 px-3 py-1.5 text-[10px] font-semibold tracking-[0.28em] uppercase text-slate-100">
+                  побажання
+                </span>
+                <h4 className="mt-4 font-display text-2xl leading-tight text-white">
+                  {activeWish.title}
+                </h4>
+                <p className="mt-4 text-sm leading-7 text-slate-200">
+                  {selectedPhoto.note}
+                </p>
+                <div
+                  className={`mt-4 rounded-[1.3rem] bg-gradient-to-br ${activeWish.accent} p-[1px]`}
+                >
+                  <div className="rounded-[calc(1.3rem-1px)] bg-slate-950/92 px-4 py-4">
+                    <p className="text-sm leading-7 text-slate-100">
+                      {activeWish.message}
+                    </p>
+                    <p className="mt-3 text-xs font-semibold text-cyan-100">
+                      {activeWish.punchline}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-4 text-xs text-slate-400">
+                  Тицяй знову щоб перевернути назад
+                </p>
+              </div>
+            </button>
+          </div>
+
+          {/* Desktop: two-column layout */}
+          <div className="hidden w-full max-w-5xl overflow-y-auto md:block">
             <div className="grid gap-6 md:grid-cols-[1.2fr,0.8fr]">
               <button
                 type="button"
