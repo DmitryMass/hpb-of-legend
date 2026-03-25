@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import gsap from 'gsap';
 import DomeGallery from '../components/DomeGallery';
 import { photoEntries } from '../lib/photos';
@@ -10,6 +10,7 @@ const domeImages = photoEntries.map((p) => ({
 
 export function MemoriesPage() {
   const rootRef = useRef<HTMLDivElement | null>(null);
+  const galleryRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
     if (!rootRef.current) return;
@@ -21,6 +22,14 @@ export function MemoriesPage() {
       );
     }, rootRef);
     return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
+    const el = galleryRef.current;
+    if (!el) return;
+    const prevent = (e: TouchEvent) => e.preventDefault();
+    el.addEventListener('touchmove', prevent, { passive: false });
+    return () => el.removeEventListener('touchmove', prevent);
   }, []);
 
   return (
@@ -37,8 +46,9 @@ export function MemoriesPage() {
 
       {/* DomeGallery — НЕ в data-memories-reveal, щоб не ховалась через GSAP */}
       <div
+        ref={galleryRef}
         className='w-full'
-        style={{ height: 'calc(100dvh - 160px)', minHeight: 380 }}
+        style={{ height: 'calc(100dvh - 160px)', minHeight: 380, touchAction: 'none' }}
       >
         <DomeGallery
           images={domeImages}
